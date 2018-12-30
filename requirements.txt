@@ -1,0 +1,4 @@
+Django==2.1.4
+git+https://github.com/weemen/esframework.git
+django-cors-headers
+cymysql #sqlalchemy can't deal with the django db engine???

@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  db:
+    image: mysql/mysql-server:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_ROOT_HOST=%
+      - MYSQL_DATABASE=esframework
+    ports:
+      - "3306:3306"
+
+  backend:
+    build: .
+    command: >
+      sh -c "sleep 10 &&
+             python3 manage.py prepare_db &&
+             python3 manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    links:
+      - db
+
+
+  frontend:
+    image: "node:10"
+    user: "node"
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./frontend:/home/node/app
+    ports:
+      - "80:3000"
+    command: "npm start"
+    depends_on:
+      - backend
